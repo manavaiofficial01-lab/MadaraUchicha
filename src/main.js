@@ -54,16 +54,21 @@ const render = (img) => {
 let targetFrameIndex = 0;
 let currentFrameIndex = 0;
 
+const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
 window.addEventListener('scroll', () => {  
   const scrollTop = document.documentElement.scrollTop;
   const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
   const scrollFraction = scrollTop / maxScrollTop;
-  targetFrameIndex = Math.floor(scrollFraction * (frameCount - 1));
+  
+  // Apply easing to the scroll fraction for a more cinematic "ease in"
+  const easedFraction = easeInOutCubic(scrollFraction);
+  targetFrameIndex = Math.floor(easedFraction * (frameCount - 1));
 });
 
 const animate = () => {
-  // Smoothly interpolate towards the target frame
-  currentFrameIndex += (targetFrameIndex - currentFrameIndex) * 0.1;
+  // Smoothly interpolate towards the target frame (lowered to 0.08 for more smoothness)
+  currentFrameIndex += (targetFrameIndex - currentFrameIndex) * 0.08;
   updateImage(Math.round(currentFrameIndex));
   requestAnimationFrame(animate);
 };
